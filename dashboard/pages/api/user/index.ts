@@ -1,27 +1,46 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { pool } from "@/client";
 import { User } from "@/pages";
+import { db } from "@/db";
+import { users } from "@/db/schema";
 
 type Data = {
-  data?: User[];
+  rows?: User[];
+  total?: number;
   error?: string;
 };
 
 export default async function handler(
-  { method }: NextApiRequest,
+  { method, body }: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  if (method !== "GET")
-    res.status(400).json({ error: "Método não habilitado para essa rota." });
+  switch (method) {
+    case "GET":
+      try {
+        const result = await db.select().from(users);
 
-  try {
-    const client = await pool.connect();
-    const result = await client.query<User>("SELECT * FROM users");
-    client.release();
+        res.status(200).json({ rows: result, total: result.length });
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Erro ao buscar usuários" });
+      }
+      break;
+    case "POST":
+      try {
+        console.log(body)
 
-    res.status(200).json({ data: result.rows });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Erro ao buscar usuários" });
+        const { username, password, email } = body;
+
+        const result = await db
+          .insert(users)
+          .values({ username, password, email }).returning();
+
+        res.status(200).json({ rows: result, total: result.length });
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Erro ao cadastrar usuário" });
+      }
+      break;
+
+      default: res.status(500).json({ error: "Método não permitido." });
   }
 }
