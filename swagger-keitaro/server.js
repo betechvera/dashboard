@@ -44,15 +44,16 @@ app.use(async (req, res, next) => {
 
     const keitaroUrl = `${KEITARO_API_BASE_URL}${routePath}`;
 
+    
+
     // console.log("teste =>", keitaroUrl)
     // Enviar requisição para a API real do Keitaro
     const keitaroResponse = await axios(keitaroUrl, {
       method: req.method,
       data: req.body,
       headers: {
-        ...req.headers,
         host: undefined,
-        "Api-Key": "fd54c3e353c0a26e767217829b0121d2",
+        "Api-Key": "629d9090c9f4c3a2390f534f91b046dd",
       }, // Remove host para evitar conflitos
     });
 
