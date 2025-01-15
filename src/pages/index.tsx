@@ -1,22 +1,15 @@
+import { User } from "@/models/user";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
-export interface User {
-  id: number;
-  username: string;
-  name: string | null;
-  last_name?: string | null;
-  email: string;
-  password?: string;
-}
-
 export default function Home() {
   const { data: users = [] } = useQuery<User[]>({
-    queryKey: [""],
+    queryKey: ["users"],
     queryFn: async () => {
       const response = await axios.get<{ rows: User[] }>("/api/user");
       return response.data.rows;
     },
+    refetchOnWindowFocus: false,
   });
 
   return (
