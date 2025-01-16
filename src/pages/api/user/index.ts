@@ -17,8 +17,6 @@ export default async function handler(
           perPage: reqPerPage,
         });
 
-        throw new Error("Teste")
-
         res.status(200).json({ page, perPage, rows, total });
       } catch (error) {
         console.error(`[SERVER: GetAllUsers] ${error}`);
