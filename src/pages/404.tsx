@@ -30,10 +30,8 @@ const Custom404: React.FC = () => {
           <a className={styles.buttonPrimary} onClick={handleBack}>
             <span>Voltar</span>
           </a>
-          <Link href="/">
-            <a className={styles.buttonSecundary}>
+          <Link className={styles.buttonSecundary} href="/">
               <span>Home</span>
-            </a>
           </Link>
         </div>
       </div>
