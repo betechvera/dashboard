@@ -4,3 +4,9 @@ export type PageResponse<T> = {
   page: number;
   perPage: number;
 };
+
+export type ErrorsConstructor = {
+  message?: string;
+  statusCode?: number;
+  stringCode?: string;
+};

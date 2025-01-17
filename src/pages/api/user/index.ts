@@ -2,6 +2,12 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { PageResponse } from "@/models";
 import { User } from "@/models/user";
 import { GetAllUsers, GetAllUsersRequest } from "@/services/user/get-all-users";
+import {
+  CreateNewUser,
+  CreateNewUserRequest,
+} from "@/services/user/create-new-user";
+import { ValidationError } from "@/errors/ValidationError";
+import { NotFoundError } from "@/errors/NotFoundError";
 
 export default async function handler(
   { method, body }: NextApiRequest,
@@ -9,9 +15,10 @@ export default async function handler(
 ) {
   switch (method) {
     case "GET":
-      const { page: reqPage, perPage: reqPerPage } = body as GetAllUsersRequest;
-
       try {
+        const { page: reqPage, perPage: reqPerPage } =
+          body as GetAllUsersRequest;
+
         const { page, perPage, rows, total } = await new GetAllUsers().execute({
           page: reqPage,
           perPage: reqPerPage,
@@ -25,6 +32,34 @@ export default async function handler(
 
       break;
     case "POST":
+      try {
+        const { username, password, email, name, last_name } =
+          body as CreateNewUserRequest;
+        body as GetAllUsersRequest;
+
+        const newUser = await new CreateNewUser().execute({
+          username,
+          password,
+          email,
+          name,
+          last_name,
+        });
+
+        const response = {
+          page: 1,
+          rows: newUser,
+          perPage: 10,
+        } as PageResponse<User>;
+
+        res.status(200).json(response);
+      } catch (error) {
+        console.error(`[SERVER: CreateNewUser] ${error}`);
+
+        if (error instanceof ValidationError || error instanceof NotFoundError)
+          res.status(400).json({ error: error.message });
+
+        res.status(400).json({ error: "Erro ao cadastrar usuário." });
+      }
       break;
 
     default:

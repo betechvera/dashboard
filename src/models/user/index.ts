@@ -5,12 +5,3 @@ export type User = {
   last_name?: string | null;
   email: string;
 };
-
-export type CreateUser = {
-  id: number;
-  username: string;
-  name?: string | null;
-  last_name?: string | null;
-  email: string;
-  password: string;
-};
