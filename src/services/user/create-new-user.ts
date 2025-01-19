@@ -1,4 +1,4 @@
-import { User, UserProps } from "@/models/user";
+import { User } from "@/models/user";
 import { db } from "../../../database";
 import { users } from "../../../database/schema";
 import { generateCryptoPassword, isValidEmail } from "@/lib/utils";
@@ -45,18 +45,21 @@ export class CreateNewUser {
 
     const hashPassword = await generateCryptoPassword(password);
 
-    const dbUser = await db
-      .insert(users)
-      .values({ username, name, last_name, email, password: hashPassword })
-      .returning({
-        id: users.id,
-        username: users.username,
-        name: users.name,
-        last_name: users.last_name,
-        email: users.email,
-      });
+    const newUser = await db.transaction(
+      async (trx) =>
+        await trx
+          .insert(users)
+          .values({ username, name, last_name, email, password: hashPassword })
+          .returning({
+            id: users.id,
+            username: users.username,
+            name: users.name,
+            last_name: users.last_name,
+            email: users.email,
+          })
+          .then((data) => new User({ ...data[0] }))
+    );
 
-    const newUser = new User({ ...dbUser[0] });
     return newUser;
   }
 }

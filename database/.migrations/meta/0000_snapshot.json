@@ -1,6 +1,6 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "prevId": "",
+  "id": "254c7c2e-9619-4a1e-8bb2-bcaecffb76fc",
+  "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -16,13 +16,13 @@
           "identity": {
             "type": "always",
             "name": "users_id_seq",
+            "schema": "public",
             "increment": "1",
+            "startWith": "1",
             "minValue": "1",
             "maxValue": "9223372036854775807",
-            "startWith": "1",
             "cache": "1",
-            "cycle": false,
-            "schema": "public"
+            "cycle": false
           }
         },
         "username": {
@@ -59,9 +59,24 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "checkConstraints": {},
+      "uniqueConstraints": {
+        "users_username_unique": {
+          "name": "users_username_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "username"
+          ]
+        },
+        "users_email_unique": {
+          "name": "users_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        }
+      },
       "policies": {},
+      "checkConstraints": {},
       "isRLSEnabled": false
     }
   },
@@ -72,11 +87,8 @@
   "policies": {},
   "views": {},
   "_meta": {
+    "columns": {},
     "schemas": {},
-    "tables": {},
-    "columns": {}
-  },
-  "internal": {
     "tables": {}
   }
 }
