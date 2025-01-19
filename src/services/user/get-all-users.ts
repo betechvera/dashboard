@@ -20,7 +20,7 @@ export class GetAllUsers {
       await db.select({ count: count() }).from(users)
     )[0].count;
 
-    const rows = await db
+    const dbRows = await db
       .select({
         id: users.id,
         username: users.username,
@@ -31,6 +31,8 @@ export class GetAllUsers {
       .from(users)
       .limit(perPage)
       .offset(offset);
+
+    const rows = dbRows.map((user) => new User({ ...user }));
 
     return {
       page,

@@ -35,7 +35,6 @@ export default async function handler(
       try {
         const { username, password, email, name, last_name } =
           body as CreateNewUserRequest;
-        body as GetAllUsersRequest;
 
         const newUser = await new CreateNewUser().execute({
           username,
@@ -47,7 +46,7 @@ export default async function handler(
 
         const response = {
           page: 1,
-          rows: newUser,
+          rows: [newUser],
           perPage: 10,
         } as PageResponse<User>;
 

@@ -21,7 +21,8 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "src/**/*"
+    "src/**/*",
+    "vitest.config.ts"
   ],
   "exclude": ["node_modules"]
 }

@@ -1,7 +1,6 @@
-import { User } from "@/models/user";
+import { User, UserProps } from "@/models/user";
 import { db } from "../../../database";
 import { users } from "../../../database/schema";
-import bcrypt from "bcrypt";
 import { generateCryptoPassword, isValidEmail } from "@/lib/utils";
 import { NotFoundError } from "@/errors/NotFoundError";
 import { ValidationError } from "@/errors/ValidationError";
@@ -14,7 +13,7 @@ export type CreateNewUserRequest = {
   password: string;
 };
 
-type CreateNewUserResponse = User[];
+type CreateNewUserResponse = User;
 
 export class CreateNewUser {
   async execute(req: CreateNewUserRequest): Promise<CreateNewUserResponse> {
@@ -46,7 +45,7 @@ export class CreateNewUser {
 
     const hashPassword = await generateCryptoPassword(password);
 
-    const newUser = await db
+    const dbUser = await db
       .insert(users)
       .values({ username, name, last_name, email, password: hashPassword })
       .returning({
@@ -56,6 +55,8 @@ export class CreateNewUser {
         last_name: users.last_name,
         email: users.email,
       });
+
+    const newUser = new User({ ...dbUser[0] });
     return newUser;
   }
 }
