@@ -62,6 +62,6 @@ export default async function handler(
       break;
 
     default:
-      res.status(500).json({ error: "Método não permitido." });
+      res.status(405).json({ error: "Método não permitido." });
   }
 }

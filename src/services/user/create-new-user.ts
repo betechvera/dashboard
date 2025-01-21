@@ -57,7 +57,7 @@ export class CreateNewUser {
             last_name: users.last_name,
             email: users.email,
           })
-          .then((data) => new User({ ...data[0] }))
+          .then((data) => data[0])
     );
 
     return newUser;
