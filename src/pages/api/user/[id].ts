@@ -1,5 +1,4 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { PageResponse } from "@/models";
 import { User } from "@/models/user";
 import { GetUserById } from "@/services/user/get-user-by-id";
 

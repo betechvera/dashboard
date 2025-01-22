@@ -1,4 +1,3 @@
-import { User } from "@/models/user";
 import { db } from "../../../database";
 import { users } from "../../../database/schema";
 import { eq } from "drizzle-orm";
@@ -9,8 +8,7 @@ import { NotFoundError } from "@/errors/NotFoundError";
 import { ValidationError } from "@/errors/ValidationError";
 
 export interface AuthRequest {
-  email?: string;
-  username?: string;
+  auth?: string;
   password: string;
 }
 
@@ -18,9 +16,9 @@ type AuthResponse = string;
 
 export class Auth {
   async execute(req: AuthRequest): Promise<AuthResponse> {
-    const { email, username = "", password } = req;
+    const { auth = "", password } = req;
 
-    if (!email && !username)
+    if (!auth)
       throw new NotFoundError({
         message: "Insira um usuário ou email.",
         stringCode: "not_username_email",
@@ -32,19 +30,29 @@ export class Auth {
         stringCode: "not_password",
       });
 
-    const user = await db
+    let user = await db
       .select()
       .from(users)
-      .where(email ? eq(users.email, email) : eq(users.username, username))
+      .where(eq(users.email, auth))
       .then((data) => data[0]);
 
     if (!user)
-      throw new NotFoundError({
-        message: "Usuário ou email não encontrado.",
-        stringCode: "not_user",
-      });
+      user = await db
+        .select()
+        .from(users)
+        .where(eq(users.username, auth))
+        .then((data) => data[0]);
 
-    const isMatchPassword = await bcrypt.compare(password, user.password);
+    // if (!user)
+    //   throw new NotFoundError({
+    //     message: "Usuário ou email não encontrado.",
+    //     stringCode: "not_user",
+    //   });
+
+    const isMatchPassword = await bcrypt.compare(
+      password,
+      user ? user.password : ""
+    );
 
     if (!isMatchPassword)
       throw new ValidationError({

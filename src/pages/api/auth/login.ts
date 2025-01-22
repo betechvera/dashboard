@@ -15,12 +15,11 @@ export default async function handler(
   switch (method) {
     case "POST":
       try {
-        const { username, password, email } = body as AuthRequest;
+        const { password, auth } = body as AuthRequest;
 
         const token = await new Auth().execute({
-          username,
+          auth,
           password,
-          email,
         });
 
         const cookies = new Cookies(req, res);
@@ -34,7 +33,11 @@ export default async function handler(
 
         return res.status(200).json({ message: "Logado com sucesso." });
       } catch (error) {
-        console.error(`[SERVER: Login]: ${dayjs().format("DD/MM/YYYY - HH:mm:ss")} \n${error}`);
+        console.error(
+          `[SERVER: Login]: ${dayjs().format(
+            "DD/MM/YYYY - HH:mm:ss"
+          )} \n${error}`
+        );
 
         if (error instanceof ValidationError || error instanceof NotFoundError)
           res.status(400).json({ error: error.message });
