@@ -8,6 +8,8 @@ import {
 } from "@/services/user/create-new-user";
 import { ValidationError } from "@/errors/ValidationError";
 import { NotFoundError } from "@/errors/NotFoundError";
+import { PostgresError } from "postgres";
+import { UserModelMap } from "@/lib/utils";
 
 export default async function handler(
   { method, body }: NextApiRequest,
@@ -56,6 +58,18 @@ export default async function handler(
 
         if (error instanceof ValidationError || error instanceof NotFoundError)
           res.status(400).json({ error: error.message });
+
+        if (error instanceof Error && "code" in error) {
+          if ((error.code = "23505")) {
+            res.status(400).json({
+              error: `${
+                UserModelMap[
+                  (error as PostgresError).constraint_name?.split("_")[1] || ""
+                ]
+              } já está sendo utilizado.`,
+            });
+          }
+        }
 
         res.status(400).json({ error: "Erro ao cadastrar usuário." });
       }

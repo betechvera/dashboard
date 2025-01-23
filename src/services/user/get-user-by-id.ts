@@ -2,6 +2,7 @@ import { User } from "@/models/user";
 import { db } from "../../../database";
 import { users } from "../../../database/schema";
 import { eq } from "drizzle-orm";
+import { NotFoundError } from "@/errors/NotFoundError";
 
 export interface GetUserByIdRequest {
   id: number;
@@ -23,6 +24,12 @@ export class GetUserById {
       })
       .from(users)
       .where(eq(users.id, id));
+
+    if (!user)
+      throw new NotFoundError({
+        message: "Usuário não enccontrado.",
+        stringCode: "not_user",
+      });
 
     return user[0];
   }
