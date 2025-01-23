@@ -12,7 +12,6 @@ const Login: React.FC = () => {
 
     const onSubmit = (data: FormData) => {
         console.log(data);
-        // Aqui você pode fazer a chamada para a API de login
     };
 
     return (
