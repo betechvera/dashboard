@@ -1,6 +1,6 @@
 import { User } from "@/models/user";
-import { db } from "../../../database";
-import { users } from "../../../database/schema";
+import { db } from "../../../../database";
+import { users } from "../../../../database/schema";
 import { generateCryptoPassword, isValidEmail } from "@/lib/utils";
 import { NotFoundError } from "@/errors/NotFoundError";
 import { ValidationError } from "@/errors/ValidationError";

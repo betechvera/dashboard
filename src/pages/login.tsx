@@ -1,12 +1,10 @@
-import React from "react";
+import { AuthRequest } from "@/services/api/auth/auth";
+import { authenticate } from "@/services/auth";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
+import { useRouter } from "next/navigation";
 
-
-interface FormData {
-    auth: string;
-    password: string;
-}
 
 const InputField = styled.input`
     padding: 10px 20px;
@@ -50,6 +48,7 @@ const Button = styled.button`
     font-weight: bold;
     font-size: 24px;
     text-align: center;
+    width:100%;
     text-decoration: none;
     background-color: #19E066;
     display: block;
@@ -60,25 +59,31 @@ const Button = styled.button`
     border-radius: 5px;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     text-shadow: 0px 1px 0px #000;
-    filter: dropshadow(color=#000, offx=0px, offy=1px);
     box-shadow: inset 0 1px 0 #FFE5C4, 0 10px 0 #108a3e;
 
     &:active{
-        top: 24px;
+        top: 10px;
         background-color: #19E066;
+        box-shadow: none;
     }
+
 `
 
 
 const Login: React.FC = () => {
+    const router = useRouter()
+
     const {
         register,
+        setError,
         handleSubmit,
         formState: { errors },
-    } = useForm<FormData>();
+    } = useForm<AuthRequest>();
 
-    const onSubmit = (data: FormData) => {
-        console.log(data);
+    useEffect(() => { console.log("errors =>", {...errors}) }, [errors])
+
+    const onSubmit = async (data: AuthRequest) => {
+        await authenticate(data).then(data => {router.push("/")}).catch((err) => { setError("root", {type:"manual", message: err.response.data.error}); console.log(err.response.data.error) })
     };
 
     return (
@@ -90,7 +95,7 @@ const Login: React.FC = () => {
                         <div className="bg-[#19E066] h-2 w-[90%] rounded-full"></div>
                     </div>
                     <ContainerInput>
-                        <label htmlFor="auth">Seu e-mail &lowast;</label>
+                        <label htmlFor="auth">E-mail ou Username &lowast;</label>
                         <InputField
                             type="text"
                             id="auth"
@@ -101,6 +106,7 @@ const Login: React.FC = () => {
                         {errors.auth && (
                             <ErrorMessage>{errors.auth.message}</ErrorMessage>
                         )}
+                    
                     </ContainerInput>
                     <ContainerInput>
                         <label htmlFor="password">Sua senha &lowast;</label>
@@ -116,6 +122,9 @@ const Login: React.FC = () => {
                     <ContainerButton>
                         <Button type="submit">Entrar</Button>
                     </ContainerButton>
+                    {errors.root && (
+                        <ErrorMessage className="text-center">&lowast;{errors.root.message}</ErrorMessage>
+                    )}
                 </form>
             </div>
         </div>

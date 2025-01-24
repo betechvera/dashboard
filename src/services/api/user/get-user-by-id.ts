@@ -1,6 +1,6 @@
 import { User } from "@/models/user";
-import { db } from "../../../database";
-import { users } from "../../../database/schema";
+import { db } from "../../../../database";
+import { users } from "../../../../database/schema";
 import { eq } from "drizzle-orm";
 import { NotFoundError } from "@/errors/NotFoundError";
 

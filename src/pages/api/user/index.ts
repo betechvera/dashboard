@@ -1,11 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { PageResponse } from "@/models";
 import { User } from "@/models/user";
-import { GetAllUsers, GetAllUsersRequest } from "@/services/user/get-all-users";
+import { GetAllUsers, GetAllUsersRequest } from "@/services/api/user/get-all-users";
 import {
   CreateNewUser,
   CreateNewUserRequest,
-} from "@/services/user/create-new-user";
+} from "@/services/api/user/create-new-user";
 import { ValidationError } from "@/errors/ValidationError";
 import { NotFoundError } from "@/errors/NotFoundError";
 import { PostgresError } from "postgres";

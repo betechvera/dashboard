@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { ValidationError } from "@/errors/ValidationError";
 import { NotFoundError } from "@/errors/NotFoundError";
-import { Auth, AuthRequest } from "@/services/auth/auth";
+import { Auth, AuthRequest } from "@/services/api/auth/auth";
 import Cookies from "cookies";
 import { env } from "@/lib/env";
 import dayjs from "dayjs";

@@ -1,7 +1,7 @@
 import { PageResponse } from "@/models";
 import { User } from "@/models/user";
-import { db } from "../../../database";
-import { users } from "../../../database/schema";
+import { db } from "../../../../database";
+import { users } from "../../../../database/schema";
 import { count } from "drizzle-orm";
 
 export interface GetAllUsersRequest {
