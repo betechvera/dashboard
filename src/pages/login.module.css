@@ -1,4 +1,4 @@
-.containerAll {
+/* .containerAll {
     color: #404040;
     display: flex;
     height: 100vh;
@@ -8,7 +8,7 @@
     background-size: cover;
     background-position: 50%;
     padding: 20px;
-}
+} */
 
 .containerTitle {
     display: flex;
@@ -62,18 +62,28 @@
     display: block;
     position: relative;
     padding: 10px 0;
-    border: none; /* Remove a borda padrão do botão */
-    cursor: pointer; /* Muda o cursor para indicar que é clicável */
-    border-radius: 5px; /* Adiciona borda arredondada */
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0); /* Remove o destaque em dispositivos móveis */
-    text-shadow: 0px 1px 0px #000; /* Sombra do texto */
-    filter: dropshadow(color=#000, offx=0px, offy=1px); /* Sombra do texto */
-    box-shadow: inset 0 1px 0 #FFE5C4, 0 10px 0 #108a3e; /* Sombra do botão */
+    border: none;
+    /* Remove a borda padrão do botão */
+    cursor: pointer;
+    /* Muda o cursor para indicar que é clicável */
+    border-radius: 5px;
+    /* Adiciona borda arredondada */
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    /* Remove o destaque em dispositivos móveis */
+    text-shadow: 0px 1px 0px #000;
+    /* Sombra do texto */
+    filter: dropshadow(color=#000, offx=0px, offy=1px);
+    /* Sombra do texto */
+    box-shadow: inset 0 1px 0 #FFE5C4, 0 10px 0 #108a3e;
+    /* Sombra do botão */
 }
 
+
 .button button:active {
-    top: 2px; /* Ajusta a posição do botão quando clicado */
-    background-color: #19E066; /* Mantém a cor de fundo ao ser clicado */
+    top: 24px;
+    /* Ajusta a posição do botão quando clicado */
+    background-color: #19E066;
+    /* Mantém a cor de fundo ao ser clicado */
 }
 
 .button:after {
@@ -93,6 +103,8 @@
     padding: 10px 20px;
     border-radius: 10px;
     background-color: #f1f1f1;
+    outline-width: 1px;
+    outline-color: #108a3e;
 }
 
 .link {
@@ -102,7 +114,9 @@
 
 .paragraf {
     text-align: center;
-}.containerAll {
+}
+
+/* .containerAll {
     color: #404040;
     display: flex;
     height: 100vh;
@@ -112,7 +126,7 @@
     background-size: cover;
     background-position: 50%;
     padding: 20px;
-}
+} */
 
 .containerTitle {
     display: flex;
@@ -167,18 +181,27 @@
     position: relative;
     width: 100%;
     padding: 10px 0;
-    border: none; /* Remove a borda padrão do botão */
-    cursor: pointer; /* Muda o cursor para indicar que é clicável */
-    border-radius: 5px; /* Adiciona borda arredondada */
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0); /* Remove o destaque em dispositivos móveis */
-    text-shadow: 0px 1px 0px #000; /* Sombra do texto */
-    filter: dropshadow(color=#000, offx=0px, offy=1px); /* Sombra do texto */
-    box-shadow: inset 0 1px 0 #FFE5C4, 0 10px 0 #108a3e; /* Sombra do botão */
+    border: none;
+    /* Remove a borda padrão do botão */
+    cursor: pointer;
+    /* Muda o cursor para indicar que é clicável */
+    border-radius: 5px;
+    /* Adiciona borda arredondada */
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    /* Remove o destaque em dispositivos móveis */
+    text-shadow: 0px 1px 0px #000;
+    /* Sombra do texto */
+    filter: dropshadow(color=#000, offx=0px, offy=1px);
+    /* Sombra do texto */
+    box-shadow: inset 0 1px 0 #FFE5C4, 0 10px 0 #108a3e;
+    /* Sombra do botão */
 }
 
 .button button:active {
-    top: 2px; /* Ajusta a posição do botão quando clicado */
-    background-color: #19E066; /* Mantém a cor de fundo ao ser clicado */
+    top: 2px;
+    /* Ajusta a posição do botão quando clicado */
+    background-color: #19E066;
+    /* Mantém a cor de fundo ao ser clicado */
 }
 
 .button:after {
@@ -209,6 +232,6 @@
     text-align: center;
 }
 
-.errorMessage{
+.errorMessage {
     color: red;
 }
