@@ -5,6 +5,7 @@ import { Auth, AuthRequest } from "@/services/api/auth/auth";
 import Cookies from "cookies";
 import { env } from "@/lib/env";
 import dayjs from "dayjs";
+import { setAuthToken } from "@/lib/api";
 
 export default async function handler(
   req: NextApiRequest,
@@ -37,6 +38,8 @@ export default async function handler(
           maxAge: 60 * 60 * 1000 * 24,
           sameSite: "strict",
         });
+
+        setAuthToken(token);
 
         return res.status(200).json({ token });
       } catch (error) {

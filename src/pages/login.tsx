@@ -78,14 +78,9 @@ const Login: React.FC = () => {
     formState: { errors },
   } = useForm<AuthRequest>();
 
-  useEffect(() => {
-    console.log("errors =>", { ...errors });
-  }, [errors]);
-
   const onSubmit = async (data: AuthRequest) => {
     await authenticate(data)
-      .then((data) => {
-        setAuthToken(data.token);
+      .then(() => {
         router.push("/");
       })
       .catch((err) => {
