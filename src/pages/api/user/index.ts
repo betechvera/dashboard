@@ -1,7 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { PageResponse } from "@/models";
 import { User } from "@/models/user";
-import { GetAllUsers, GetAllUsersRequest } from "@/services/api/user/get-all-users";
+import {
+  GetAllUsers,
+  GetAllUsersRequest,
+} from "@/services/api/user/get-all-users";
 import {
   CreateNewUser,
   CreateNewUserRequest,
@@ -35,12 +38,11 @@ export default async function handler(
       break;
     case "POST":
       try {
-        const { username, password, email, name, last_name } =
+        const { username, email, name, last_name } =
           body as CreateNewUserRequest;
 
         const newUser = await new CreateNewUser().execute({
           username,
-          password,
           email,
           name,
           last_name,

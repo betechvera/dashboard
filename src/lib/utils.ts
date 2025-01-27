@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import crypto from "crypto";
 
 export const generateCryptoPassword = async (
   password: string
@@ -26,4 +27,17 @@ export const UserModelMap: { [key: string]: string } = {
   password: "Senha",
   name: "Nome",
   last_name: "Sobrenome",
+};
+
+export const generateRandomPassword = (length = 12) => {
+  const charset =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+[]{}?";
+  const passwordArray = Array.from(
+    crypto.randomFillSync(new Uint8Array(length))
+  );
+  const password = passwordArray
+    .map((byte) => charset[byte % charset.length])
+    .join("");
+
+  return password;
 };

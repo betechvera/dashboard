@@ -8,6 +8,20 @@
       "when": 1737296347758,
       "tag": "0000_fresh_timeslip",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1737987440474,
+      "tag": "0001_cold_frog_thor",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1737987585830,
+      "tag": "0002_serious_sleepwalker",
+      "breakpoints": true
     }
   ]
 }

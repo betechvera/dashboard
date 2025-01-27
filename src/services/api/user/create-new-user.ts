@@ -1,7 +1,11 @@
 import { User } from "@/models/user";
 import { db } from "../../../../database";
 import { users } from "../../../../database/schema";
-import { generateCryptoPassword, isValidEmail } from "@/lib/utils";
+import {
+  generateCryptoPassword,
+  generateRandomPassword,
+  isValidEmail,
+} from "@/lib/utils";
 import { NotFoundError } from "@/errors/NotFoundError";
 import { ValidationError } from "@/errors/ValidationError";
 
@@ -10,14 +14,13 @@ export type CreateNewUserRequest = {
   name?: string | null;
   last_name?: string | null;
   email: string;
-  password: string;
 };
 
 type CreateNewUserResponse = User;
 
 export class CreateNewUser {
   async execute(req: CreateNewUserRequest): Promise<CreateNewUserResponse> {
-    const { username, name = null, last_name = null, email, password } = req;
+    const { username, name = null, last_name = null, email } = req;
 
     if (!username)
       throw new NotFoundError({
@@ -31,17 +34,13 @@ export class CreateNewUser {
         stringCode: "not_email",
       });
 
-    if (!password)
-      throw new NotFoundError({
-        message: "Insira uma senha.",
-        stringCode: "not_password",
-      });
-
     if (!isValidEmail(email))
       throw new ValidationError({
         message: "Insira um email válido.",
         stringCode: "invalid_email",
       });
+
+    const password = generateRandomPassword();
 
     const hashPassword = await generateCryptoPassword(password);
 
@@ -50,16 +49,10 @@ export class CreateNewUser {
         await trx
           .insert(users)
           .values({ username, name, last_name, email, password: hashPassword })
-          .returning({
-            id: users.id,
-            username: users.username,
-            name: users.name,
-            last_name: users.last_name,
-            email: users.email,
-          })
+          .returning()
           .then((data) => data[0])
     );
 
-    return newUser;
+    return { ...newUser, password };
   }
 }
