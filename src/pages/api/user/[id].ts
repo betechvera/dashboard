@@ -1,12 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { User } from "@/models/user";
-import { GetUserById } from "@/services/user/get-user-by-id";
+import { GetUserById } from "@/services/api/user/get-user-by-id";
 import { NotFoundError } from "@/errors/NotFoundError";
-import { DeleteUserById } from "@/services/user/delete-user-by-id";
+import { DeleteUserById } from "@/services/api/user/delete-user-by-id";
 import {
   UpdateUserById,
   UpdateUserByIdRequest,
-} from "@/services/user/update-user-by-id";
+} from "@/services/api/user/update-user-by-id";
 
 export default async function handler(
   { method, query, body }: NextApiRequest,

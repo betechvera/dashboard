@@ -14,7 +14,7 @@ export default function Home() {
 
   return (
     <div>
-      {users?.map((item: any) => (
+      {users?.map((item: User) => (
         <div key={item.id}>{item.email}</div>
       ))}
 
