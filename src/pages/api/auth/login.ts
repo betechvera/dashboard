@@ -8,7 +8,7 @@ import dayjs from "dayjs";
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<{ message: string } | { error?: string }>
+  res: NextApiResponse<{ token: string } | { error?: string }>
 ) {
   const { method, body } = req;
 
@@ -17,7 +17,7 @@ export default async function handler(
       try {
         const { password, auth } = body as AuthRequest;
 
-        const token = await new Auth().execute({
+        const { token, refreshToken } = await new Auth().execute({
           auth,
           password,
         });
@@ -28,10 +28,17 @@ export default async function handler(
           httpOnly: true,
           secure: env.NODE_ENV === "production",
           maxAge: 60 * 60 * 1000,
-          path: "/",
+          sameSite: "strict",
         });
 
-        return res.status(200).json({ message: "Logado com sucesso." });
+        cookies.set("refresh_token", refreshToken, {
+          httpOnly: true,
+          secure: env.NODE_ENV === "production",
+          maxAge: 60 * 60 * 1000 * 24,
+          sameSite: "strict",
+        });
+
+        return res.status(200).json({ token });
       } catch (error) {
         console.error(
           `[SERVER: Login]: ${dayjs().format(
