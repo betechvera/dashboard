@@ -6,14 +6,14 @@ import { count } from "drizzle-orm";
 
 export interface GetAllUsersRequest {
   page?: number;
-  perPage: number;
+  perPage?: number;
 }
 
 type GetAllUsersResponse = PageResponse<User>;
 
 export class GetAllUsers {
   async execute(req: GetAllUsersRequest): Promise<GetAllUsersResponse> {
-    const { page = 1, perPage } = req;
+    const { page = 1, perPage = 10 } = req;
     const offset = (page - 1) * perPage;
 
     const totalCountResult = (

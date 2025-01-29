@@ -12,7 +12,7 @@ export interface AuthRequest {
   password: string;
 }
 
-type AuthResponse = { token: string; refreshToken: string };
+export type AuthResponse = { token: string; refreshToken: string };
 
 export class Auth {
   async execute(req: AuthRequest): Promise<AuthResponse> {
@@ -63,13 +63,13 @@ export class Auth {
     const token = jwt.sign(
       { id: user.id, email: user.email, username: user.username },
       env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "1m" }
     );
 
     const refreshToken = jwt.sign(
       { id: user.id, email: user.email, username: user.username },
       env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "7d" }
     );
 
     return { token, refreshToken };

@@ -50,7 +50,7 @@ export default async function handler(
         console.error(`[SERVER: CreateNewUser] ${error}`);
 
         if (error instanceof NotFoundError)
-          res.status(400).json({ error: error.message });
+          res.status(error.statusCode).json({ error: error.message });
 
         res.status(400).json({ error: "Erro ao apagar usuário." });
       }

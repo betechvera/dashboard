@@ -59,7 +59,7 @@ export default async function handler(
         console.error(`[SERVER: CreateNewUser] ${error}`);
 
         if (error instanceof ValidationError || error instanceof NotFoundError)
-          res.status(400).json({ error: error.message });
+          res.status(error.statusCode).json({ error: error.message });
 
         if (error instanceof Error && "code" in error) {
           if ((error.code = "23505")) {

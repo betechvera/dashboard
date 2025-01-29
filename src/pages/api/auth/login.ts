@@ -5,7 +5,6 @@ import { Auth, AuthRequest } from "@/services/api/auth/auth";
 import Cookies from "cookies";
 import { env } from "@/lib/env";
 import dayjs from "dayjs";
-import { setAuthToken } from "@/lib/api";
 
 export default async function handler(
   req: NextApiRequest,
@@ -39,8 +38,6 @@ export default async function handler(
           sameSite: "strict",
         });
 
-        setAuthToken(token);
-
         return res.status(200).json({ token });
       } catch (error) {
         console.error(
@@ -50,7 +47,7 @@ export default async function handler(
         );
 
         if (error instanceof ValidationError || error instanceof NotFoundError)
-          res.status(400).json({ error: error.message });
+          res.status(error.statusCode).json({ error: error.message });
 
         res.status(400).json({ error: "Erro ao realizar o login." });
       }

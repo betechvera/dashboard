@@ -10,3 +10,9 @@ export type ErrorsConstructor = {
   statusCode?: number;
   stringCode?: string;
 };
+
+export interface AuthenticatedUser {
+  id: number;
+  email: string;
+  username: string;
+}

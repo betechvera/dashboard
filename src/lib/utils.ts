@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import crypto from "crypto";
+import dayjs from "dayjs";
 
 export const generateCryptoPassword = async (
   password: string
@@ -41,3 +42,5 @@ export const generateRandomPassword = (length = 12) => {
 
   return password;
 };
+
+export const thisDateHour = () => dayjs().format("DD/MM/YYYY - HH:mm:ss");

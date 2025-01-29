@@ -1,10 +1,8 @@
 import { AuthRequest } from "@/services/api/auth/auth";
 import { authenticate } from "@/services/auth";
-import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
 import { useRouter } from "next/navigation";
-import { setAuthToken } from "@/lib/api";
 
 const InputField = styled.input`
   padding: 10px 20px;
