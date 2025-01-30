@@ -7,7 +7,7 @@ export interface DeleteUserByIdRequest {
   id: number;
 }
 
-type DeleteUserByIdResponse = { message: string };
+export type DeleteUserByIdResponse = { message: string };
 
 export class DeleteUserById {
   async execute(req: DeleteUserByIdRequest): Promise<DeleteUserByIdResponse> {

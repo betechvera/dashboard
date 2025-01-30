@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import axios from "axios";
 import { useState } from "react";
-import styles from "../../styles/users.module.css"; // 🔥 Importa o arquivo CSS
+import styles from "../../styles/users.module.css";
 
 interface User {
     id: number;
@@ -25,7 +25,7 @@ export default function UsersPage() {
     const [page, setPage] = useState(1);
     const perPage = 10;
 
-    const { data, error } = useQuery<PageResponse<User>>({
+    const { data, error, refetch } = useQuery<PageResponse<User>>({
         queryKey: ["users", page],
         queryFn: async () => {
             const { data } = await axios.get<PageResponse<User>>("/api/user", {
@@ -35,6 +35,12 @@ export default function UsersPage() {
         },
         staleTime: 5000,
     });
+
+    function deleteUser (id: number) {
+        axios.delete(`/api/user/${id}`).then(() => {
+            refetch();
+        });
+    }
 
     if (error) {
         console.error("Erro ao carregar os usuários:", error);
@@ -76,7 +82,7 @@ export default function UsersPage() {
                                             ✏️ Editar
                                         </button>
                                         <button
-                                            onClick={() => console.log(`Excluir usuário ${user.id}`)}
+                                            onClick={() => deleteUser(user.id)}
                                             className={styles.deleteButton}
                                         >
                                             🗑️ Excluir

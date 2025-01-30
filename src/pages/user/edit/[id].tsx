@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
-import styles from "../../styles/edit-user.module.css"; // 🔥 Importa o CSS Module
+import styles from "../../../styles/edit-user.module.css"; // 🔥 Importa o CSS Module
 
 interface User {
     id: number;

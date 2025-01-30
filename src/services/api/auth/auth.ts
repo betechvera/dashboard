@@ -63,7 +63,7 @@ export class Auth {
     const token = jwt.sign(
       { id: user.id, email: user.email, username: user.username },
       env.JWT_SECRET,
-      { expiresIn: "1m" }
+      { expiresIn: "1h" }
     );
 
     const refreshToken = jwt.sign(

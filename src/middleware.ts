@@ -4,7 +4,7 @@
 // export async function middleware(req: NextRequest) {
 //   console.log("[MIDDLEWARE] Temporariamente desativado");
 
-//   return NextResponse.next(); // 🔥 Ignora todas as verificações e segue normalmente
+//   return NextResponse.next();
 // }
 
 // export const config = {

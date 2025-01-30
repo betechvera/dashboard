@@ -2,6 +2,31 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
 import styles from "../../styles/new-user.module.css";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+interface CreatedUser {
+    name: string;
+    lastName: string;
+    username: string;
+    email: string;
+    password: string;
+}
+
+interface User {
+    name: string;
+    lastName?: string;
+    last_name?: string;
+    username: string;
+    email: string;
+    password?: string;
+}
+
+interface ApiResponse {
+    page: number;
+    perPage: number;
+    rows: User[];
+}
 
 export default function NewUserPage() {
     const [form, setForm] = useState({
@@ -9,9 +34,9 @@ export default function NewUserPage() {
         lastName: "",
         username: "",
         email: "",
-        password: "",
     });
 
+    const [createdUser, setCreatedUser] = useState<CreatedUser | null>(null);
     const [showPassword, setShowPassword] = useState(false);
     const router = useRouter();
 
@@ -22,24 +47,78 @@ export default function NewUserPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        const formattedData = {
-            name: form.name,
-            last_name: form.lastName,
-            username: form.username,
-            email: form.email,
-            password: form.password,
-        };
-
         try {
-            await axios.post("/api/user", formattedData);
-            router.push("/user");
-        } catch (error) {
-            console.error("Erro ao adicionar usuário", error);
+            const { data } = await axios.post<ApiResponse>("/api/user", {
+                name: form.name,
+                last_name: form.lastName,
+                username: form.username,
+                email: form.email,
+            });
+
+            if (data.rows && data.rows.length > 0) {
+                setCreatedUser({
+                    name: data.rows[0].name,
+                    lastName: (data.rows[0] as any).last_name || "",
+                    username: data.rows[0].username,
+                    email: data.rows[0].email,
+                    password: data.rows[0].password ?? "Senha gerada automaticamente",
+                });
+
+                toast.success("Usuário criado com sucesso!", {
+                    position: "top-right",
+                    autoClose: 3000,
+                });
+            } else {
+                toast.error("Erro ao criar usuário, tente novamente.", {
+                    position: "top-right",
+                    autoClose: 3000,
+                });
+            }
+        } catch (error: any) {
+            toast.error("Erro ao criar usuário. Verifique os campos.", {
+                position: "top-right",
+                autoClose: 3000,
+            });
         }
     };
 
+    const copyToClipboard = (text: string) => {
+        navigator.clipboard.writeText(text);
+        toast.success("📋 Senha copiada para a área de transferência!", {
+            position: "top-right",
+            autoClose: 2000,
+        });
+    };
+
+    if (createdUser) {
+        return (
+            <div className={styles.container}>
+                <ToastContainer /> {/* 🔥 Adicionando o ToastContainer aqui */}
+                <h1 className={styles.title}>Usuário Criado com Sucesso! 🎉</h1>
+                <div className={styles.userInfo}>
+                    <p><strong>Nome Completo:</strong> {createdUser.name} {createdUser.lastName}</p>
+                    <p><strong>Usuário:</strong> {createdUser.username}</p>
+                    <p><strong>Email:</strong> {createdUser.email}</p>
+                    <div className={styles.passwordContainer}>
+                        <p><strong>Senha:</strong> {showPassword ? createdUser.password : "••••••••"}</p>
+                        <button onClick={() => setShowPassword(!showPassword)} className={styles.eyeButton}>
+                            {showPassword ? "🙈" : "👁️"}
+                        </button>
+                        <button onClick={() => copyToClipboard(createdUser.password)} className={styles.copyButton}>
+                            📋 Copiar
+                        </button>
+                    </div>
+                </div>
+                <button onClick={() => router.push("/user")} className={styles.backButton}>
+                    🔙 Voltar para Usuários
+                </button>
+            </div>
+        );
+    }
+
     return (
         <div className={styles.container}>
+            <ToastContainer />
             <h1 className={styles.title}>Adicionar Novo Usuário</h1>
             <form onSubmit={handleSubmit} className={styles.form}>
                 <label className={styles.label}>
@@ -58,23 +137,7 @@ export default function NewUserPage() {
                     Email:
                     <input type="email" name="email" value={form.email} onChange={handleChange} required className={styles.input} />
                 </label>
-                <label className={styles.label}>
-                    Senha:
-                    <div className={styles.passwordContainer}>
-                        <input
-                            type={showPassword ? "text" : "password"}
-                            name="password"
-                            value={form.password}
-                            onChange={handleChange}
-                            required
-                            className={styles.passwordInput}
-                        />
-                        <button type="button" onClick={() => setShowPassword(!showPassword)} className={styles.eyeButton}>
-                            {showPassword ? "🙈" : "👁️"}
-                        </button>
-                    </div>
-                </label>
-                <button type="submit" className={styles.submitButton}>Salvar</button>
+                <button type="submit" className={styles.submitButton}>💾 Criar Usuário</button>
             </form>
         </div>
     );
