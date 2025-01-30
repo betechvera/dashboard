@@ -8,6 +8,7 @@ interface User {
     lastName: string;
     username: string;
     email: string;
+    password: string;
 }
 
 export default function EditUserPage() {
@@ -20,18 +21,28 @@ export default function EditUserPage() {
         lastName: "",
         username: "",
         email: "",
+        password: "",
     });
+
+    const [showPassword, setShowPassword] = useState(false);
 
     useEffect(() => {
         if (id) {
-            const token = "fake-token-123"; // 🔥 Use um token real se necessário
+            const token = "fake-token-123";
             axios
-                .get<User>(`/api/user/${id}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+                .get<User>(`/api/user/${id}`, { // 🔥 Define explicitamente que 'data' é do tipo 'User'
+                    headers: { Authorization: `Bearer ${token}` },
                 })
-                .then(({ data }) => setForm(data))
+                .then(({ data }) => {
+                    setForm({
+                        id: data.id,
+                        name: data.name,
+                        lastName: data.lastName, // 🔥 Agora TypeScript reconhece 'lastName'
+                        username: data.username,
+                        email: data.email,
+                        password: "", // 🔥 Mantém a senha vazia por segurança
+                    });
+                })
                 .catch((error) => console.error("Erro ao buscar usuário:", error));
         }
     }, [id]);
@@ -42,13 +53,22 @@ export default function EditUserPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        const formattedData = {
+            name: form.name,
+            last_name: form.lastName, // 🔥 Converte `lastName` para `last_name`
+            username: form.username,
+            email: form.email,
+            password: form.password,
+        };
+
         try {
             const token = "fake-token-123";
-            await axios.put(`/api/user/${id}`, form, {
+            await axios.put(`/api/user/${id}`, formattedData, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
-            router.push("/user"); // 🔥 Redireciona para a lista de usuários
+            router.push("/user");
         } catch (error) {
             console.error("Erro ao editar usuário", error);
         }
@@ -66,7 +86,7 @@ export default function EditUserPage() {
                 </label>
                 <label style={styles.label}>
                     Sobrenome:
-                    <input type="text" name="last_name" value={form.lastName} onChange={handleChange} required style={styles.input} />
+                    <input type="text" name="lastName" value={form.lastName} onChange={handleChange} required style={styles.input} />
                 </label>
                 <label style={styles.label}>
                     Usuário:
@@ -75,6 +95,22 @@ export default function EditUserPage() {
                 <label style={styles.label}>
                     Email:
                     <input type="email" name="email" value={form.email} onChange={handleChange} required style={styles.input} />
+                </label>
+                <label style={styles.label}>
+                    Senha:
+                    <div style={styles.passwordContainer}>
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            name="password"
+                            value={form.password}
+                            onChange={handleChange}
+                            required
+                            style={styles.passwordInput}
+                        />
+                        <button type="button" onClick={() => setShowPassword(!showPassword)} style={styles.eyeButton}>
+                            {showPassword ? "🙈" : "👁️"}
+                        </button>
+                    </div>
                 </label>
                 <div style={styles.buttonContainer}>
                     <button type="submit" style={styles.saveButton}>💾 Salvar</button>
@@ -85,7 +121,7 @@ export default function EditUserPage() {
     );
 }
 
-// 🔥 Estilos
+// 🎨 Estilos
 const styles = {
     container: {
         maxWidth: "500px",
@@ -122,6 +158,26 @@ const styles = {
         backgroundColor: "#fff",
         fontSize: "16px",
         marginTop: "5px",
+    },
+    passwordContainer: {
+        display: "flex",
+        alignItems: "center",
+        position: "relative" as const,
+    },
+    passwordInput: {
+        flex: 1,
+        padding: "10px",
+        border: "1px solid #aaa",
+        borderRadius: "5px",
+        fontSize: "16px",
+    },
+    eyeButton: {
+        position: "absolute" as const,
+        right: "10px",
+        background: "none",
+        border: "none",
+        cursor: "pointer",
+        fontSize: "16px",
     },
     buttonContainer: {
         display: "flex",
