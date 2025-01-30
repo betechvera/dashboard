@@ -1,0 +1,75 @@
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    text-align: center;
+    background-color: #f9f9f9;
+    border-radius: 26px;
+    color: black;
+    border: 1px solid #d2d2d2;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+    font-size: 24px;
+    margin-bottom: 15px;
+    padding-top: 20px;
+}
+
+.addButton {
+    /* margin-bottom: 15px; */
+    margin-top: 2%;
+    padding: 10px;
+    background: rgb(127, 203, 127);
+    color: black;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transform: translateX(215%);
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.tableHead {
+    background: #d2ecdc;
+    text-align: center;
+    color: black;
+}
+
+.tableCell {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+.actionButton {
+    margin-right: 10px;
+    background: rgb(87, 87, 242);
+    color: white;
+    border: none;
+    padding: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.deleteButton {
+    background: rgb(229, 61, 61);
+    color: white;
+    border: none;
+    padding: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.pagination {
+    margin-top: 15px;
+}
+
+.paginationButton {
+    padding: 10px;
+    margin: 5px;
+    cursor: pointer;
+}

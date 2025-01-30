@@ -1,3 +1,17 @@
+// import { NextResponse } from "next/server";
+// import type { NextRequest } from "next/server";
+
+// export async function middleware(req: NextRequest) {
+//   console.log("[MIDDLEWARE] Temporariamente desativado");
+
+//   return NextResponse.next(); // 🔥 Ignora todas as verificações e segue normalmente
+// }
+
+// export const config = {
+//   matcher: ["/api/:path"],
+// };
+
+
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { env } from "@/lib/env";
@@ -38,11 +52,11 @@ export async function middleware(req: NextRequest) {
         { status: 401 }
       );
     } else {
-      return NextResponse.redirect(new URL("/login", req.url)); // Redireciona se o token for inválido
+      return NextResponse.redirect(new URL("/login", req.url));
     }
   }
 
-  return NextResponse.next(); // Continua para a página solicitada
+  return NextResponse.next();
 }
 
 export const config = {

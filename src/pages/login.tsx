@@ -79,7 +79,7 @@ const Login: React.FC = () => {
   const onSubmit = async (data: AuthRequest) => {
     await authenticate(data)
       .then(() => {
-        router.push("/");
+        router.push("/user");
       })
       .catch((err) => {
         setError("root", { type: "manual", message: err.response.data.error });
