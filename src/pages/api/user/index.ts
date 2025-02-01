@@ -15,14 +15,14 @@ import { PostgresError } from "postgres";
 import { UserModelMap } from "@/lib/utils";
 
 export default async function handler(
-  { method, body }: NextApiRequest,
+  { method, body, query }: NextApiRequest,
   res: NextApiResponse<PageResponse<User> | { error?: string }>
 ) {
   switch (method) {
     case "GET":
       try {
         const { page: reqPage, perPage: reqPerPage } =
-          body as GetAllUsersRequest;
+          query as GetAllUsersRequest;
 
         const { page, perPage, rows, total } = await new GetAllUsers().execute({
           page: reqPage,

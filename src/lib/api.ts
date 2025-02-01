@@ -9,16 +9,17 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    console.log("Aloo??");
-
     if (error.response?.status === 401) {
       if (error.response.data?.stringCode === "jwt_expired") {
         console.log("[AXIOS] Token expirado, tentando renovar...");
 
         try {
-          await refreshAuth();
+          const { token } = await refreshAuth();
           // Reenvia a requisição original
-          return api(originalRequest);
+          return api({
+            ...originalRequest,
+            // headers: { Cookies: `token=${token}` },
+          });
         } catch (refreshError) {
           console.error("[AXIOS] Erro ao renovar o token", refreshError);
           Router.push("/login");

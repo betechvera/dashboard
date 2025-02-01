@@ -25,6 +25,5 @@ export const getAllUsers = async ({
 
 export const deleteUser = async (id: number): Promise<DeleteUserByIdResponse> => {
   const response = await api.delete<DeleteUserByIdResponse>(`/user/${id}`);
-  
   return response.data;
 };

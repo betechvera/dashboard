@@ -80,7 +80,7 @@ const Login: React.FC = () => {
   const onSubmit = async (data: AuthRequest) => {
     await authenticate(data)
       .then(() => {
-        router.push("/user");
+        router.push("/");
       })
       .catch((err) => {
         setError("root", { type: "manual", message: err.response.data.error });

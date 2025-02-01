@@ -1,8 +1,7 @@
 import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import nookies from "nookies";
-import jwt from "jsonwebtoken";
+import jwt, { TokenExpiredError } from "jsonwebtoken";
 import { env } from "@/lib/env";
-import { JWTExpired } from "jose/errors";
 import { refreshAuth } from "@/services/auth";
 
 interface AuthenticatedProps {
@@ -34,7 +33,6 @@ export function withAuth<P extends AuthenticatedProps>(
     }
 
     try {
-    console.log("JWT TESTING GSSP");
       // Verifica se o token é válido
       const decoded = jwt.verify(
         token,
@@ -61,23 +59,32 @@ export function withAuth<P extends AuthenticatedProps>(
 
       return { props: { user: decoded } as P };
     } catch (error) {
-      if (error instanceof JWTExpired) {
-        console.log("JWT EXPIRED GSSP");
+      if (error instanceof TokenExpiredError) {
+        try {
+          const data = await refreshAuth(context);
 
-        await refreshAuth()
-          .then((data) => {
-            const user = jwt.decode(data.token) as AuthenticatedProps["user"];
-            return { props: { user } as P };
-          })
-          .catch(() => {
-            return {
-              redirect: {
-                destination: "/login",
-                permanent: false,
-              },
-            } as GetServerSidePropsResult<P>;
+          const user = jwt.decode(data.token) as AuthenticatedProps["user"];
+
+          nookies.set(context, "token", data.token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            maxAge: 15 * 60, // 15 minutos
+            path: "/",
           });
+
+          console.log("newToken", data.token);
+          return { props: { user } as P };
+        } catch (refreshError: any) {
+          return {
+            redirect: {
+              destination: "/login",
+              permanent: false,
+            },
+          } as GetServerSidePropsResult<P>;
+        }
       }
+
+      console.log("[AUTH] INSTA REJECT", context.req.headers);
 
       return {
         redirect: {
@@ -86,5 +93,6 @@ export function withAuth<P extends AuthenticatedProps>(
         },
       } as GetServerSidePropsResult<P>;
     }
+    // return { props: {} as P };
   };
 }

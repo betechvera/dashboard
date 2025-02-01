@@ -14,29 +14,32 @@ type GetAllUsersResponse = PageResponse<User>;
 export class GetAllUsers {
   async execute(req: GetAllUsersRequest): Promise<GetAllUsersResponse> {
     const { page = 1, perPage = 10 } = req;
-    const offset = (page - 1) * perPage;
 
-    const totalCountResult = (
-      await db.select({ count: count() }).from(users)
-    )[0].count;
+    const perPageNumber = Number(perPage);
+    const pageNumber = Number(page);
+
+    const offset = (pageNumber - 1) * perPageNumber;
+
+    const [{ count: total }] = await db.select({ count: count() }).from(users);
 
     const rows = await db
       .select({
         id: users.id,
         username: users.username,
         name: users.name,
-        lastName: users.last_name,
+        last_name: users.last_name,
         email: users.email,
       })
       .from(users)
-      .limit(perPage)
+      .orderBy(users.id)
+      .limit(perPageNumber)
       .offset(offset);
 
     return {
       page,
       perPage,
       rows,
-      total: totalCountResult,
+      total,
     };
   }
 }
