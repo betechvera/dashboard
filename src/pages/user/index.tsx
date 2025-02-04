@@ -47,15 +47,15 @@ export default function UsersPage() {
   }
 
   return (
-    <div className={styles.page}>
-      <div className={styles.container}>
-        <h1 className={styles.title}>Lista de Usuários</h1>
+    <div>
+      <div className="max-w-screen-md mx-auto m-5 text-center bg-[#f9f9f9] rounded-3xl text-black shadow-[0px_4px_10px_rgba(0,0,0,0.1)]">
+        <h1 className="text-2xl mb-4 pt-5">Lista de Usuários</h1>
         {data?.rows?.length === 0 ? (
           <p>Nenhum usuário encontrado.</p>
         ) : (
-          <table className={styles.table}>
+          <table className="w-full border-collapse text-left">
             <thead>
-              <tr className={styles.tableHead}>
+              <tr className="bg-[#d2ecdc] text-center text-black">
                 <th className={styles.tableCell}>Nome</th>
                 <th className={styles.tableCell}>Usuário</th>
                 <th className={styles.tableCell}>Email</th>
@@ -74,13 +74,13 @@ export default function UsersPage() {
                   <td className={styles.tableCell}>
                     <button
                       onClick={() => router.push(`/user/edit/${user.id}`)}
-                      className={styles.actionButton}
+                      className="mr-3 bg-blue-500 hover:bg-blue-700 text-white font-bold p-2 rounded"
                     >
                       ✏️ Editar
                     </button>
                     <button
                       onClick={() => deleteUser(user.id)}
-                      className={styles.deleteButton}
+                      className="p-2 bg-red-500 hover:bg-red-700 text-white font-bold rounded"
                     >
                       🗑️ Excluir
                     </button>
@@ -92,10 +92,10 @@ export default function UsersPage() {
         )}
 
         <Link href="/user/new">
-          <button className={styles.addButton}>➕ Novo Usuário</button>
+          <button className="mt-6 p-2 bg-[rgb(127,203,127)] text-black border-none rounded cursor-pointer transform translate-x-[215%]">➕ Novo Usuário</button>
         </Link>
 
-        <div className={styles.pagination}>
+        <div className="mt-4">
           <button
             disabled={page === 1}
             onClick={() => setPage(page - 1)}

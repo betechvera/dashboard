@@ -1,32 +1,13 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import axios from "axios";
 import styles from "../../styles/new-user.module.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { User } from "@/models/user";
+import { createUser } from "@/services/user";
+import { useForm } from "react-hook-form";
+import { CreateNewUserRequest } from "@/services/api/user/create-new-user";
 
-interface CreatedUser {
-    name: string;
-    lastName: string;
-    username: string;
-    email: string;
-    password: string;
-}
-
-interface User {
-    name: string;
-    lastName?: string;
-    last_name?: string;
-    username: string;
-    email: string;
-    password?: string;
-}
-
-interface ApiResponse {
-    page: number;
-    perPage: number;
-    rows: User[];
-}
 
 export default function NewUserPage() {
     const [form, setForm] = useState({
@@ -36,7 +17,7 @@ export default function NewUserPage() {
         email: "",
     });
 
-    const [createdUser, setCreatedUser] = useState<CreatedUser | null>(null);
+    const [createdUser, setCreatedUser] = useState<User | null>(null);
     const [showPassword, setShowPassword] = useState(false);
     const router = useRouter();
 
@@ -44,43 +25,67 @@ export default function NewUserPage() {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const {
+        register,
+        handleSubmit,
+        setError,
+        formState: { errors },
+    } = useForm<CreateNewUserRequest>();
 
-        try {
-            const { data } = await axios.post<ApiResponse>("/api/user", {
-                name: form.name,
-                last_name: form.lastName,
-                username: form.username,
-                email: form.email,
-            });
+    const onSubmit = async (data: CreateNewUserRequest) => {
 
-            if (data.rows && data.rows.length > 0) {
-                setCreatedUser({
-                    name: data.rows[0].name,
-                    lastName: (data.rows[0] as any).last_name || "",
-                    username: data.rows[0].username,
-                    email: data.rows[0].email,
-                    password: data.rows[0].password ?? "Senha gerada automaticamente",
-                });
+        // console.log(data)
+        await createUser({ ...data }).then(response => {
+            setCreatedUser(response.rows[0]);
 
-                toast.success("Usuário criado com sucesso!", {
-                    position: "top-right",
-                    autoClose: 3000,
-                });
-            } else {
-                toast.error("Erro ao criar usuário, tente novamente.", {
-                    position: "top-right",
-                    autoClose: 3000,
-                });
-            }
-        } catch (error: any) {
-            toast.error("Erro ao criar usuário. Verifique os campos.", {
+            toast.success("Usuário criado com sucesso!", {
                 position: "top-right",
                 autoClose: 3000,
             });
-        }
-    };
+        }).catch(error => {
+            toast.error(error.response.data.error, {
+                position: "top-right",
+                autoClose: 3000,
+            });
+            setError("root", { type: "manual", message: error.response.data.error });
+        });
+    }
+
+    // const handleSubmit = async (e: React.FormEvent) => {
+
+
+
+    // e.preventDefault();
+
+    // try {
+    //     const { data } = await createUser({});
+
+    //     if (data.rows && data.rows.length > 0) {
+    //         setCreatedUser({
+    //             name: data.rows[0].name,
+    //             lastName: (data.rows[0] as any).last_name || "",
+    //             username: data.rows[0].username,
+    //             email: data.rows[0].email,
+    //             password: data.rows[0].password ?? "Senha gerada automaticamente",
+    //         });
+
+    //         toast.success("Usuário criado com sucesso!", {
+    //             position: "top-right",
+    //             autoClose: 3000,
+    //         });
+    //     } else {
+    //         toast.error("Erro ao criar usuário, tente novamente.", {
+    //             position: "top-right",
+    //             autoClose: 3000,
+    //         });
+    //     }
+    // } catch (error: any) {
+    //     toast.error("Erro ao criar usuário. Verifique os campos.", {
+    //         position: "top-right",
+    //         autoClose: 3000,
+    //     });
+    // }
+    // };
 
     const copyToClipboard = (text: string) => {
         navigator.clipboard.writeText(text);
@@ -96,7 +101,7 @@ export default function NewUserPage() {
                 <ToastContainer /> {/* 🔥 Adicionando o ToastContainer aqui */}
                 <h1 className={styles.title}>Usuário Criado com Sucesso! 🎉</h1>
                 <div className={styles.userInfo}>
-                    <p><strong>Nome Completo:</strong> {createdUser.name} {createdUser.lastName}</p>
+                    <p><strong>Nome Completo:</strong> {createdUser.name} {createdUser.last_name}</p>
                     <p><strong>Usuário:</strong> {createdUser.username}</p>
                     <p><strong>Email:</strong> {createdUser.email}</p>
                     <div className={styles.passwordContainer}>
@@ -104,7 +109,7 @@ export default function NewUserPage() {
                         <button onClick={() => setShowPassword(!showPassword)} className={styles.eyeButton}>
                             {showPassword ? "🙈" : "👁️"}
                         </button>
-                        <button onClick={() => copyToClipboard(createdUser.password)} className={styles.copyButton}>
+                        <button onClick={() => copyToClipboard(createdUser.password!)} className={styles.copyButton}>
                             📋 Copiar
                         </button>
                     </div>
@@ -120,22 +125,25 @@ export default function NewUserPage() {
         <div className={styles.container}>
             <ToastContainer />
             <h1 className={styles.title}>Adicionar Novo Usuário</h1>
-            <form onSubmit={handleSubmit} className={styles.form}>
-                <label className={styles.label}>
-                    Nome:
-                    <input type="text" name="name" value={form.name} onChange={handleChange} required className={styles.input} />
+            <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+                <label htmlFor="name" className={styles.label}>
+                    Nome: <span className="text-red-400">*</span>
+                    <input type="text" {...register("name", { required: "*Insi" })} className={styles.input} />
+                    {errors.name && <p className="text-red-600">{errors.name.message as string}</p>}
                 </label>
-                <label className={styles.label}>
-                    Sobrenome:
-                    <input type="text" name="lastName" value={form.lastName} onChange={handleChange} required className={styles.input} />
+                <label htmlFor="last_name" className={styles.label}>
+                    Sobrenome: <span className="text-red-400">*</span>
+                    <input type="text" {...register("last_name", { required: "*Campo obrigatório" })} className={styles.input} />
+                    {errors.last_name && <p className="text-red-600">{errors.last_name.message as string}</p>}
                 </label>
-                <label className={styles.label}>
-                    Usuário:
-                    <input type="text" name="username" value={form.username} onChange={handleChange} required className={styles.input} />
+                <label htmlFor="auth" className={styles.label}>
+                    Usuário: <span className="text-red-400">*</span>
+                    <input type="text" {...register("username")} className={styles.input} />
                 </label>
-                <label className={styles.label}>
-                    Email:
-                    <input type="email" name="email" value={form.email} onChange={handleChange} required className={styles.input} />
+                <label htmlFor="auth" className={styles.label}>
+                    Email: <span className="text-red-400">*</span>
+                    <input type="email" {...register("email", { required: "*Campo obrigatório" })} className={styles.input} />
+                    {errors.email && <p className="text-red-600">{errors.email.message as string}</p>}
                 </label>
                 <button type="submit" className={styles.submitButton}>💾 Criar Usuário</button>
             </form>

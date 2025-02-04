@@ -8,8 +8,10 @@ import { DeleteUserById, DeleteUserByIdResponse } from "../api/user/delete-user-
 export const createUser = async ({
   username,
   email,
-}: CreateNewUserRequest): Promise<User> => {
-  const response = await api.post<User>("/user", { username, email });
+  name = null,
+  last_name = null,
+}: CreateNewUserRequest): Promise<PageResponse<User>> => {
+  const response = await api.post<PageResponse<User>>("/user", { username, email, name, last_name });
   return response.data;
 };
 
