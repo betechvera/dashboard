@@ -19,7 +19,7 @@ export class GetUserById {
         id: users.id,
         username: users.username,
         name: users.name,
-        lastName: users.last_name,
+        last_name: users.last_name,
         email: users.email,
       })
       .from(users)
@@ -27,7 +27,7 @@ export class GetUserById {
 
     if (!user)
       throw new NotFoundError({
-        message: "Usuário não enccontrado.",
+        message: "Usuário não encontrado.",
         stringCode: "not_user",
       });
 

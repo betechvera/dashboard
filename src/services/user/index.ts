@@ -4,6 +4,7 @@ import { CreateNewUserRequest } from "../api/user/create-new-user";
 import { GetAllUsersRequest } from "../api/user/get-all-users";
 import { PageResponse } from "@/models";
 import { DeleteUserById, DeleteUserByIdResponse } from "../api/user/delete-user-by-id";
+import { UpdateUserByIdRequest, UpdateUserByIdResponse } from "../api/user/update-user-by-id";
 
 export const createUser = async ({
   username,
@@ -27,5 +28,15 @@ export const getAllUsers = async ({
 
 export const deleteUser = async (id: number): Promise<DeleteUserByIdResponse> => {
   const response = await api.delete<DeleteUserByIdResponse>(`/user/${id}`);
+  return response.data;
+};
+
+export const getUserById = async (id: number): Promise<User> => {
+  const response = await api.get<User>(`/user/${id}`);
+  return response.data;
+}
+
+export const updateUserById = async (id: number, data: UpdateUserByIdRequest): Promise<UpdateUserByIdResponse> => {
+  const response = await api.put<UpdateUserByIdResponse>(`/user/${id}`, data);
   return response.data;
 };

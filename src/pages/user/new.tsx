@@ -10,20 +10,10 @@ import { CreateNewUserRequest } from "@/services/api/user/create-new-user";
 
 
 export default function NewUserPage() {
-    const [form, setForm] = useState({
-        name: "",
-        lastName: "",
-        username: "",
-        email: "",
-    });
 
     const [createdUser, setCreatedUser] = useState<User | null>(null);
     const [showPassword, setShowPassword] = useState(false);
     const router = useRouter();
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
-    };
 
     const {
         register,
@@ -51,41 +41,6 @@ export default function NewUserPage() {
         });
     }
 
-    // const handleSubmit = async (e: React.FormEvent) => {
-
-
-
-    // e.preventDefault();
-
-    // try {
-    //     const { data } = await createUser({});
-
-    //     if (data.rows && data.rows.length > 0) {
-    //         setCreatedUser({
-    //             name: data.rows[0].name,
-    //             lastName: (data.rows[0] as any).last_name || "",
-    //             username: data.rows[0].username,
-    //             email: data.rows[0].email,
-    //             password: data.rows[0].password ?? "Senha gerada automaticamente",
-    //         });
-
-    //         toast.success("Usuário criado com sucesso!", {
-    //             position: "top-right",
-    //             autoClose: 3000,
-    //         });
-    //     } else {
-    //         toast.error("Erro ao criar usuário, tente novamente.", {
-    //             position: "top-right",
-    //             autoClose: 3000,
-    //         });
-    //     }
-    // } catch (error: any) {
-    //     toast.error("Erro ao criar usuário. Verifique os campos.", {
-    //         position: "top-right",
-    //         autoClose: 3000,
-    //     });
-    // }
-    // };
 
     const copyToClipboard = (text: string) => {
         navigator.clipboard.writeText(text);

@@ -7,6 +7,7 @@ import {
   UpdateUserById,
   UpdateUserByIdRequest,
 } from "@/services/api/user/update-user-by-id";
+import { thisDateHour } from "@/lib/utils";
 
 export default async function handler(
   { method, query, body }: NextApiRequest,
@@ -30,7 +31,7 @@ export default async function handler(
         if (error instanceof NotFoundError)
           res.status(400).json({ error: error.message });
 
-        res.status(400).json({ error: "Erro ao consultar os usuários." });
+        res.status(400).json({ error: "Erro ao consultar os usuário." });
       }
       break;
 
@@ -58,13 +59,19 @@ export default async function handler(
 
     case "PUT":
       try {
-        const { id, email, last_name, name, password, username } =
+        const { id } = query;
+
+        const numberId = Number(id);
+
+        if (typeof numberId !== "number")
+          res.status(400).json({ error: "ID precisa ser um número." });
+
+        const { email, last_name, name, password, username } =
           body as UpdateUserByIdRequest;
 
-        console.log(username);
 
         const userUpdated = await new UpdateUserById().execute({
-          id,
+          id: numberId,
           email,
           last_name,
           name,
@@ -74,7 +81,7 @@ export default async function handler(
 
         res.status(200).json(userUpdated);
       } catch (error) {
-        console.error(`[SERVER: CreateNewUser] ${error}`);
+        console.error(`[SERVER: UpdateUserById ${thisDateHour()}] ${error}`);
 
         if (error instanceof NotFoundError)
           res.status(400).json({ error: error.message });

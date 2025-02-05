@@ -14,7 +14,7 @@ export interface UpdateUserByIdRequest {
   last_name?: string;
 }
 
-type UpdateUserByIdResponse = User;
+export type UpdateUserByIdResponse = User;
 
 export class UpdateUserById {
   async execute(req: UpdateUserByIdRequest): Promise<UpdateUserByIdResponse> {
