@@ -1,12 +1,9 @@
 import { AuthRequest } from "@/services/api/auth/auth";
-import { authenticate } from "@/services/auth";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
 import styles from "@/styles/login.module.css";
+import { useAuth } from "@/hooks/useAuth";
 
 const Login: React.FC = () => {
-  const router = useRouter();
-
   const {
     register,
     setError,
@@ -14,14 +11,15 @@ const Login: React.FC = () => {
     formState: { errors },
   } = useForm<AuthRequest>();
 
+  const { login } = useAuth();
+
   const onSubmit = async (data: AuthRequest) => {
-    await authenticate(data)
-      .then(() => {
-        router.push("/");
-      })
-      .catch((err) => {
-        setError("root", { type: "manual", message: err.response.data.error });
+    await login(data).catch((error) => {
+      setError("root", {
+        type: "manual",
+        message: error.response.data.error,
       });
+    });
   };
 
   return (
@@ -37,18 +35,22 @@ const Login: React.FC = () => {
           </div>
           <div className={styles.containerInput}>
             <label htmlFor="auth">E-mail ou Username &lowast;</label>
-            <input className={styles.inputField}
+            <input
+              className={styles.inputField}
               type="text"
               id="auth"
               {...register("auth", {
                 required: "*Campo obrigatório",
               })}
             />
-            {errors.auth && <p className={styles.errorMessage}>{errors.auth.message}</p>}
+            {errors.auth && (
+              <p className={styles.errorMessage}>{errors.auth.message}</p>
+            )}
           </div>
           <div className={styles.containerInput}>
             <label htmlFor="password">Sua senha &lowast;</label>
-            <input className={styles.inputField}
+            <input
+              className={styles.inputField}
               type="password"
               id="password"
               {...register("password", { required: "*Campo obrigatório" })}
@@ -58,7 +60,9 @@ const Login: React.FC = () => {
             )}
           </div>
           <div className={styles.containerButton}>
-            <button className={styles.button} type="submit">Entrar</button>
+            <button className={styles.button} type="submit">
+              Entrar
+            </button>
           </div>
           {errors.root && (
             <p className={`${styles.errorMessage} text-center`}>
@@ -71,6 +75,4 @@ const Login: React.FC = () => {
   );
 };
 
-
 export default Login;
-

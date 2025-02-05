@@ -29,3 +29,8 @@ export const refreshAuth = async (
   );
   return response.data;
 };
+
+export const authLogout = async (): Promise<{ message: string }> => {
+  const response = await api.post<{ message: string }>("/auth/logout");
+  return response.data;
+};

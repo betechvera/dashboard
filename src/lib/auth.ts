@@ -72,7 +72,6 @@ export function withAuth<P extends AuthenticatedProps>(
             path: "/",
           });
 
-          console.log("newToken", data.token);
           return { props: { user } as P };
         } catch (refreshError: any) {
           return {

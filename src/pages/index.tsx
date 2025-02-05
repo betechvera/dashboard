@@ -1,7 +1,8 @@
+import Layout from "@/components/Layout";
 import { withAuth } from "@/lib/auth";
 
 const Index: React.FC = () => {
-  return <div className="text-center text-black">Dashboard main</div>;
+  return <Layout>Olá, mundo!</Layout>;
 };
 
 export default Index;
