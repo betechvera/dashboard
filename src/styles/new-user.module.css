@@ -1,5 +1,7 @@
 .container {
     max-width: 500px;
+    min-width: 350px;
+    width: 35%;
     margin: 50px auto;
     padding: 20px;
     text-align: center;
@@ -37,6 +39,7 @@
     background-color: #fff;
     font-size: 16px;
     margin-top: 5px;
+    font-weight: normal;
 }
 
 .passwordContainer {

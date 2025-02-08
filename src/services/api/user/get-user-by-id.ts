@@ -21,6 +21,8 @@ export class GetUserById {
         name: users.name,
         last_name: users.last_name,
         email: users.email,
+        first_login: users.first_login,
+        admin: users.admin
       })
       .from(users)
       .where(eq(users.id, id));

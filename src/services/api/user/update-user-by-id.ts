@@ -12,13 +12,24 @@ export interface UpdateUserByIdRequest {
   email?: string;
   name?: string;
   last_name?: string;
+  first_login?: boolean;
+  admin?: boolean;
 }
 
 export type UpdateUserByIdResponse = User;
 
 export class UpdateUserById {
   async execute(req: UpdateUserByIdRequest): Promise<UpdateUserByIdResponse> {
-    const { id, username, password, email, name, last_name } = req;
+    const {
+      id,
+      username,
+      password,
+      email,
+      name,
+      last_name,
+      admin,
+      first_login,
+    } = req;
 
     const user = await db
       .select()
@@ -32,8 +43,6 @@ export class UpdateUserById {
         stringCode: "not_user",
       });
 
-    console.log("User =>", user, user.email);
-
     const hashPassword = password
       ? await generateCryptoPassword(password)
       : undefined;
@@ -46,6 +55,8 @@ export class UpdateUserById {
         email: email || user.email,
         name: name || user.name,
         last_name: last_name || user.last_name,
+        first_login: first_login === undefined ? user.first_login : first_login,
+        admin: admin === undefined ? user.admin : admin,
       })
       .where(eq(users.id, id))
       .returning({

@@ -1,31 +1,15 @@
-// import { NextResponse } from "next/server";
-// import type { NextRequest } from "next/server";
-
-// export async function middleware(req: NextRequest) {
-//   console.log("[MIDDLEWARE] Temporariamente desativado");
-
-//   return NextResponse.next();
-// }
-
-// export const config = {
-//   matcher: ["/api/:path"],
-// };
-
-
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { env } from "@/lib/env";
 import { jwtVerify } from "jose";
 import { JWTExpired } from "jose/errors";
 
-const unprotectedRoutes = ["/login", "/api/refresh-token"];
+const unprotectedRoutes = ["/login", "/api/register", "/api/refresh-token"];
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   if (unprotectedRoutes.includes(pathname)) return NextResponse.next();
-
-  console.log("[MIDDLEWARE] passing by middleware");
 
   const token = req.cookies.get("token")?.value;
 
@@ -43,7 +27,6 @@ export async function middleware(req: NextRequest) {
     await jwtVerify(token, secret);
   } catch (error) {
     if (error instanceof JWTExpired) {
-      console.error(`[PRINCIPAL MIDDLEWARE] JWP EXPIRED`);
       return NextResponse.json(
         {
           error: "Não autorizado.",

@@ -5,6 +5,7 @@ import { useState } from "react";
 import styles from "../../styles/users.module.css";
 import { getAllUsers } from "@/services/user";
 import Layout from "@/components/Layout";
+import { withAuth } from "@/lib/auth";
 
 export default function UsersPage() {
   const router = useRouter();
@@ -33,7 +34,6 @@ export default function UsersPage() {
   }
 
   return (
-
     <Layout>
       <div>
         <div className="max-w-screen-md mx-auto m-5 text-center bg-[#f9f9f9] rounded-3xl text-black shadow-[0px_4px_10px_rgba(0,0,0,0.1)]">
@@ -78,8 +78,10 @@ export default function UsersPage() {
               </tbody>
             </table>
           )}
-          <Link href="/user/new">
-            <button className="mt-6 p-2 bg-[rgb(127,203,127)] text-black border-none rounded cursor-pointer transform translate-x-[215%]">➕ Novo Usuário</button>
+          <Link href="/users/new">
+            <button className="mt-6 p-2 bg-[rgb(127,203,127)] text-black border-none rounded cursor-pointer transform translate-x-[215%]">
+              ➕ Novo Usuário
+            </button>
           </Link>
           <div className="mt-4">
             <button
@@ -93,7 +95,6 @@ export default function UsersPage() {
             <button
               disabled={Math.ceil((data?.total ?? 0) / perPage) <= page}
               onClick={() => {
-                console.log("teste");
                 setPage((prev) => prev + 1);
               }}
               className={styles.paginationButton}
@@ -106,3 +107,5 @@ export default function UsersPage() {
     </Layout>
   );
 }
+
+export const getServerSideProps = withAuth();

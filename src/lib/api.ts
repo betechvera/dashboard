@@ -11,8 +11,6 @@ api.interceptors.response.use(
 
     if (error.response?.status === 401) {
       if (error.response.data?.stringCode === "jwt_expired") {
-        console.log("[AXIOS] Token expirado, tentando renovar...");
-
         try {
           const { token } = await refreshAuth();
           // Reenvia a requisição original
@@ -25,7 +23,6 @@ api.interceptors.response.use(
           Router.push("/login");
         }
       } else if (error.response.data?.stringCode === "no_token") {
-        console.log("no_token");
         Router.push("/login");
       }
     }

@@ -5,4 +5,6 @@ export type User = {
   last_name?: string | null;
   email: string;
   password?: string;
+  first_login?: boolean;
+  admin?: boolean;
 };

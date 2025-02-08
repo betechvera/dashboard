@@ -23,8 +23,8 @@ export default async function handler(
         cookies.set("token", token, {
           httpOnly: true,
           secure: env.NODE_ENV === "production",
-          maxAge: 60 * 60 * 1000,
-          sameSite: "lax",
+          maxAge: 20 * 60 * 1000, //definido em milisegundos
+          sameSite: "strict",
         });
 
         return res.status(200).json({ token });

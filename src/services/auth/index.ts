@@ -17,8 +17,6 @@ export const authenticate = async ({
 export const refreshAuth = async (
   ctx?: GetServerSidePropsContext
 ): Promise<RefreshTokenResponse> => {
-  console.log(ctx?.req.headers.host);
-  console.log(ctx?.req.headers["x-forwarded-proto"]);
   const baseUrl = `${ctx?.req.headers["x-forwarded-proto"] || "http"}://${
     ctx?.req.headers.host
   }`;
@@ -32,5 +30,22 @@ export const refreshAuth = async (
 
 export const authLogout = async (): Promise<{ message: string }> => {
   const response = await api.post<{ message: string }>("/auth/logout");
+  return response.data;
+};
+
+export const firstLogin = async ({
+  new_password,
+  name,
+  last_name,
+}: {
+  new_password: string;
+  name: string;
+  last_name: string;
+}): Promise<{ message: string }> => {
+  const response = await api.post<{ message: string }>("/auth/first-login", {
+    new_password,
+    name,
+    last_name,
+  });
   return response.data;
 };

@@ -1,16 +1,19 @@
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 import dayjs from "dayjs";
+import { env } from "@/lib/env";
+import jwt from "jsonwebtoken";
+import { User } from "@/models/user";
 
 export const generateCryptoPassword = async (
   password: string
 ): Promise<string> => {
-  return bcrypt.hash(password, 10).catch(() => {
+  return bcrypt.hash(password, env.BCRYPT_SALT_ROUNDS).catch(() => {
     throw new Error("Falha ao criptografar senha | crypt_password");
   });
 };
 
-export const compareCryptoPassword = async (
+export const compareCryptoPassword = (
   password: string,
   hash: string
 ): Promise<boolean> => {
@@ -44,3 +47,41 @@ export const generateRandomPassword = (length = 12) => {
 };
 
 export const thisDateHour = () => dayjs().format("DD/MM/YYYY - HH:mm:ss");
+
+export const createToken = ({
+  time,
+  user,
+  secret,
+}: {
+  time?: number;
+  user: User;
+  secret?: string;
+}) => {
+  return jwt.sign(
+    {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+    },
+    secret || env.JWT_SECRET,
+    { expiresIn: time || "15m" }
+  );
+};
+
+export const createRefreshToken = ({
+  time,
+  user,
+}: {
+  time?: number;
+  user: User;
+}) => {
+  return jwt.sign(
+    {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+    },
+    env.JWT_SECRET,
+    { expiresIn: time || "7d" }
+  );
+};

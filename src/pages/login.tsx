@@ -2,6 +2,10 @@ import { AuthRequest } from "@/services/api/auth/auth";
 import { useForm } from "react-hook-form";
 import styles from "@/styles/login.module.css";
 import { useAuth } from "@/hooks/useAuth";
+import { GetServerSidePropsContext } from "next";
+import { db } from "../../database";
+import { users } from "../../database/schema";
+import { count } from "drizzle-orm";
 
 const Login: React.FC = () => {
   const {
@@ -34,13 +38,15 @@ const Login: React.FC = () => {
             <div className="bg-[#19E066] h-2 w-[90%] rounded-full"></div>
           </div>
           <div className={styles.containerInput}>
-            <label htmlFor="auth">E-mail ou Username &lowast;</label>
+            <label htmlFor="auth">
+              E-mail ou Username <span className="text-red-400">&lowast;</span>
+            </label>
             <input
               className={styles.inputField}
               type="text"
               id="auth"
               {...register("auth", {
-                required: "*Campo obrigatório",
+                required: "* Insira usuário ou email.",
               })}
             />
             {errors.auth && (
@@ -48,7 +54,7 @@ const Login: React.FC = () => {
             )}
           </div>
           <div className={styles.containerInput}>
-            <label htmlFor="password">Sua senha &lowast;</label>
+            <label htmlFor="password">Sua senha <span className="text-red-400">&lowast;</span></label>
             <input
               className={styles.inputField}
               type="password"
@@ -76,3 +82,25 @@ const Login: React.FC = () => {
 };
 
 export default Login;
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  if (ctx.req.cookies.token) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  } else if ((await db.select({ count: count() }).from(users))[0].count <= 0) {
+    return {
+      redirect: {
+        destination: "/register",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};

@@ -31,7 +31,7 @@ const Header: React.FC = () => {
           </ul>
         </nav>
         <div className="flex items-center space-x-4">
-          <FaUserCircle size={24} />
+          <FaUserCircle size={24} className="mr-[-4px]" />
           <span>{fullName}</span>
           <button
             onClick={logout}

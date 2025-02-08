@@ -6,13 +6,20 @@ import jwt from "jsonwebtoken";
 import { env } from "@/lib/env";
 import { NotFoundError } from "@/errors/NotFoundError";
 import { ValidationError } from "@/errors/ValidationError";
+import { createRefreshToken, createToken } from "@/lib/utils";
+import { User } from "@/models/user";
 
 export interface AuthRequest {
   auth?: string;
   password: string;
 }
 
-export type AuthResponse = { token: string; refreshToken: string };
+export type AuthResponse = {
+  token: string;
+  refreshToken: string;
+  first_login_token?: string;
+  user: User;
+};
 
 export class Auth {
   async execute(req: AuthRequest): Promise<AuthResponse> {
@@ -60,18 +67,31 @@ export class Auth {
         stringCode: "invalid_credentials",
       });
 
-    const token = jwt.sign(
-      { id: user.id, email: user.email, username: user.username },
-      env.JWT_SECRET,
-      { expiresIn: "1m" }
-    );
+    const token = createToken({ user });
 
-    const refreshToken = jwt.sign(
-      { id: user.id, email: user.email, username: user.username },
-      env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
+    const refreshToken = createRefreshToken({ user });
 
-    return { token, refreshToken };
+    let first_login_token;
+
+    if (user.first_login) {
+      first_login_token = createToken({
+        user,
+        secret: env.FIRST_LOGIN_JWT_SECRET,
+      });
+    }
+
+    return {
+      token,
+      refreshToken,
+      first_login_token,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        name: user.name,
+        last_name: user.last_name,
+        admin: user.admin,
+      },
+    };
   }
 }
