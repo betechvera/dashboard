@@ -28,14 +28,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
 
   useEffect(() => {
-    const token = getCookie("token");
-    if (token) {
-      const savedUser = JSON.parse(localStorage.getItem("user") || "{}");
-      if (savedUser && savedUser.id) {
-        setUser(savedUser);
-      } else {
-        logout();
-      }
+    const savedUser = JSON.parse(localStorage.getItem("user") || "{}");
+    if (savedUser && savedUser.id) {
+      setUser(savedUser);
     }
   }, []);
 
