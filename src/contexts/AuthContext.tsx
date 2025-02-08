@@ -4,8 +4,8 @@ import { User } from "@/models/user";
 import { authenticate, authLogout } from "@/services/auth";
 import { AuthRequest } from "@/services/api/auth/auth";
 import { toast, ToastContainer } from "react-toastify";
-import nookies from "nookies";
 import { UpdateUserByIdRequest } from "@/services/api/user/update-user-by-id";
+import { getCookie } from "cookies-next";
 
 // Definindo o contexto de autenticação
 interface AuthContextProps {
@@ -28,7 +28,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
 
   useEffect(() => {
-    const token = nookies.get().token;
+    const token = getCookie("token");
     if (token) {
       const savedUser = JSON.parse(localStorage.getItem("user") || "{}");
       if (savedUser && savedUser.id) {

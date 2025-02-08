@@ -1,13 +1,40 @@
 import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
-import nookies from "nookies";
 import jwt, { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
 import { env } from "@/lib/env";
 import { refreshAuth } from "@/services/auth";
 import { User } from "@/models/user";
 import { GetUserById } from "@/services/api/user/get-user-by-id";
+import Cookies from "cookies";
 
 interface AuthenticatedProps {
   user: User;
+}
+
+// Função para tratar a lógica do first-login
+async function handleFirstLoginRedirect(
+  reqUrl: string | undefined,
+  user: User
+) {
+  if (!reqUrl?.includes("first-login")) {
+    if (user.first_login) {
+      return {
+        redirect: {
+          destination: "/first-login",
+          permanent: false,
+        },
+      };
+    }
+  } else {
+    if (!user.first_login) {
+      return {
+        redirect: {
+          destination: "/",
+          permanent: false,
+        },
+      };
+    }
+  }
+  return null;
 }
 
 export function withAuth<P extends AuthenticatedProps>(
@@ -18,8 +45,9 @@ export function withAuth<P extends AuthenticatedProps>(
   return async (
     context: GetServerSidePropsContext
   ): Promise<GetServerSidePropsResult<P>> => {
-    const cookies = nookies.get(context);
-    const token = cookies.token;
+    const { req, res } = context;
+    const cookies = new Cookies(req, res);
+    const token = cookies.get("token");
 
     if (!token) {
       return {
@@ -31,7 +59,7 @@ export function withAuth<P extends AuthenticatedProps>(
     }
 
     try {
-      // Verifica se o token é válido
+      // Verifica e decodifica o token
       const decoded = jwt.verify(
         token,
         env.JWT_SECRET
@@ -39,34 +67,16 @@ export function withAuth<P extends AuthenticatedProps>(
 
       const thisUser = await new GetUserById().execute({ id: decoded.id });
 
-      if (!context.req.url?.includes("first-login")) {
-        if (thisUser.first_login) {
-          return {
-            redirect: {
-              destination: "/first-login",
-              permanent: false,
-            },
-          };
-        }
-      } else {
-        // se eu estiver na first login
-        if (!thisUser.first_login) {
-          // porém, não for meu primeiro acesso
-          return {
-            props: { user: decoded } as P,
-            redirect: {
-              destination: "/",
-              permanent: false,
-            },
-          };
-        }
-      }
+      // 🛑 Se precisar redirecionar por first-login, retorna já aqui
+      const firstLoginRedirect = await handleFirstLoginRedirect(
+        req.url,
+        thisUser
+      );
+      if (firstLoginRedirect) return firstLoginRedirect;
 
-      // Se getServerSidePropsFunc existir, chama a função e mescla os resultados
+      // Se tiver uma função adicional, executa e adiciona `user`
       if (getServerSidePropsFunc) {
         const result = await getServerSidePropsFunc(context);
-
-        // Garante que props existe antes de adicionar user
         if ("props" in result) {
           return {
             ...result,
@@ -76,7 +86,6 @@ export function withAuth<P extends AuthenticatedProps>(
             },
           };
         }
-
         return result;
       }
 
@@ -87,43 +96,28 @@ export function withAuth<P extends AuthenticatedProps>(
         (error as JsonWebTokenError).message === "jwt must be provided"
       ) {
         try {
+          // Token expirado, tenta renovar
           const data = await refreshAuth(context);
+          const newUser = jwt.decode(data.token) as AuthenticatedProps["user"];
 
-          const user = jwt.decode(data.token) as AuthenticatedProps["user"];
-
-          nookies.set(context, "token", data.token, {
+          // Atualiza o token no cookie
+          cookies.set("token", data.token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            maxAge: 20 * 60, // 15 minutos (definido em segundos)
+            maxAge: 20 * 60 * 1000, // 20 minutos
             path: "/",
           });
 
-          const thisUser = await new GetUserById().execute({ id: user.id });
+          const thisUser = await new GetUserById().execute({ id: newUser.id });
 
-          if (!context.req.url?.includes("first-login")) {
-            if (thisUser.first_login) {
-              return {
-                redirect: {
-                  destination: "/first-login",
-                  permanent: false,
-                },
-              };
-            }
-          } else {
-            // se eu estiver na first login
-            if (!thisUser.first_login) {
-              // porém, não for meu primeiro acesso
-              return {
-                props: { user } as P,
-                redirect: {
-                  destination: "/",
-                  permanent: false,
-                },
-              };
-            }
-          }
+          // Se precisar redirecionar por first-login, retorna já aqui
+          const firstLoginRedirect = await handleFirstLoginRedirect(
+            req.url,
+            thisUser
+          );
+          if (firstLoginRedirect) return firstLoginRedirect;
 
-          return { props: { user } as P };
+          return { props: { user: newUser } as P };
         } catch (refreshError: any) {
           return {
             redirect: {
