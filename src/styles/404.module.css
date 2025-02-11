@@ -1,0 +1,106 @@
+.popup {
+    background: linear-gradient(210deg, #00332f 43.52%, #00ab7a 75.03%);
+    height: auto;
+    width: 95%;
+    border-radius: 26px;
+    box-shadow: 5px 5px 15px black;
+    padding-bottom: 0.5%;
+}
+
+@media screen and (min-width: 432px) {
+    .popup {
+        height: auto;
+        width: 400px;
+    }
+}
+
+.buttonPrimary {
+    overflow: hidden;
+    position: relative;
+    color: black;
+    text-transform: uppercase;
+    font-weight: 800;
+    font-size: 4.5vw;
+    text-shadow: 0 1px 10px white;
+    width: 30%;
+    text-align: center;
+    padding: 8px 0;
+    border-radius: 4px;
+    background: linear-gradient(155deg, #ff9900, #f5cf52, #f5cf52, #ff9900);
+    border-bottom: 2px solid #c0bc3f87;
+    border-top: 2px solid #c0bc3fb1;
+    animation: pulse-button 1s infinite;
+    z-index: 9999999;
+    margin-bottom: 2%;
+}
+
+.buttonPrimary::after {
+    background: #fffb8e;
+    will-change: left;
+    content: "";
+    height: 155px;
+    left: -75px;
+    position: absolute;
+    top: -50px;
+    transform: rotate(35deg);
+    transition: all 1s cubic-bezier(0.19, 1, 0.22, 1);
+    width: 25px;
+    z-index: -10;
+    animation: shade 2s infinite ease-in-out;
+}
+
+@media screen and (min-width: 432px) {
+    .buttonPrimary {
+        font-size: 18px;
+    }
+}
+
+.buttonSecundary {
+    overflow: hidden;
+    position: relative;
+    color: rgb(0, 0, 0);
+    text-transform: uppercase;
+    font-weight: 600;
+    text-decoration: underline black;
+    font-size: 4.5vw;
+    width: 30%;
+    text-align: center;
+    padding: 8px 0;
+    border-radius: 4px;
+    z-index: 9999999;
+    margin-bottom: 2%;
+}
+
+.buttonSecundary:hover {
+    color: white;
+    text-decoration: underline white;
+}
+
+@media screen and (min-width: 432px) {
+    .buttonSecundary {
+        font-size: 18px;
+    }
+}
+
+@keyframes shade {
+    30% {
+      left: 120%;
+    }
+  }
+
+  @keyframes pulse-button {
+    0% {
+      transform: scale(0.95);
+      box-shadow: 0 0 5px 0 #89d897;
+    }
+
+    70% {
+      transform: scale(1);
+      box-shadow: 0 0 5px 10px rgba(43, 250, 1, 0);
+    }
+
+    100% {
+      transform: scale(0.95);
+      box-shadow: 0 0 5px 0 rgba(43, 250, 1, 0);
+    }
+  }
