@@ -87,7 +87,7 @@ export default function NewUserPage() {
             </div>
           </div>
           <button
-            onClick={() => router.push("/user")}
+            onClick={() => router.push("/users")}
             className={styles.backButton}
           >
             🔙 Voltar para Usuários

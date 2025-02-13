@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useState } from "react";
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import styles from "../../styles/users.module.css";
 import { getAllUsers } from "@/services/user";
 import Layout from "@/components/Layout";
@@ -10,10 +11,10 @@ import { withAuth } from "@/lib/auth";
 export default function UsersPage() {
   const router = useRouter();
   const [page, setPage] = useState(1);
-  const [perPage] = useState(10);
+  const [perPage, setPerPage] = useState(10);
 
   const { data, error, refetch } = useQuery({
-    queryKey: ["users", page],
+    queryKey: ["users", page, perPage],
     queryFn: async () => {
       const res = await getAllUsers({ page, perPage });
       return res;
@@ -38,6 +39,27 @@ export default function UsersPage() {
       <div>
         <div className="max-w-screen-md mx-auto m-5 text-center bg-[#f9f9f9] rounded-3xl text-black shadow-[0px_4px_10px_rgba(0,0,0,0.1)]">
           <h1 className="text-2xl mb-4 pt-5">Lista de Usuários</h1>
+
+          <div className="mb-4 flex justify-center">
+            <FormControl variant="outlined" size="small">
+              <InputLabel id="per-page-label">Usuários por página</InputLabel>
+              <Select
+                labelId="per-page-label"
+                value={perPage}
+                onChange={(e) => {
+                  setPerPage(Number(e.target.value));
+                  setPage(1);
+                }}
+                label="Usuários por página"
+              >
+                <MenuItem value={5}>5</MenuItem>
+                <MenuItem value={10}>10</MenuItem>
+                <MenuItem value={20}>20</MenuItem>
+                <MenuItem value={50}>50</MenuItem>
+              </Select>
+            </FormControl>
+          </div>
+
           {data?.rows?.length === 0 ? (
             <p>Nenhum usuário encontrado.</p>
           ) : (
@@ -78,11 +100,13 @@ export default function UsersPage() {
               </tbody>
             </table>
           )}
+
           <Link href="/users/new">
             <button className="mt-6 p-2 bg-[rgb(127,203,127)] text-black border-none rounded cursor-pointer transform translate-x-[215%]">
               ➕ Novo Usuário
             </button>
           </Link>
+
           <div className="mt-4">
             <button
               disabled={page === 1}
@@ -94,9 +118,7 @@ export default function UsersPage() {
             <span>Página {page}</span>
             <button
               disabled={Math.ceil((data?.total ?? 0) / perPage) <= page}
-              onClick={() => {
-                setPage((prev) => prev + 1);
-              }}
+              onClick={() => setPage((prev) => prev + 1)}
               className={styles.paginationButton}
             >
               ➡️
